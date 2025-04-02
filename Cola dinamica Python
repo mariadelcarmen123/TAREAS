@@ -1,0 +1,78 @@
+class Nodo:
+    def __init__(self, dato):
+        """Cada nodo tiene un dato y un puntero al siguiente nodo."""
+        self.dato = dato
+        self.siguiente = None
+
+class ColaDinamica:
+    def __init__(self):
+        """Inicializamos la cola con frente y final en None y tamaño en 0."""
+        self.frente = None
+        self.final = None
+        self.tamano = 0
+
+    def esta_vacia(self):
+        """Devuelve True si la cola está vacía, False en caso contrario."""
+        return self.frente is None
+
+    def encolar(self, dato):
+        """Agrega un elemento al final de la cola."""
+        nuevo_nodo = Nodo(dato)
+        if self.esta_vacia():
+            self.frente = self.final = nuevo_nodo
+        else:
+            self.final.siguiente = nuevo_nodo
+            self.final = nuevo_nodo
+        self.tamano += 1
+        print(f"Encolado: {dato}")
+
+    def desencolar(self):
+        """Elimina y devuelve el elemento en el frente de la cola."""
+        if self.esta_vacia():
+            raise Exception("La cola está vacía")
+        dato = self.frente.dato
+        self.frente = self.frente.siguiente
+        if self.frente is None:
+            self.final = None
+        self.tamano -= 1
+        print(f"Desencolado: {dato}")
+        return dato
+
+    def ver_frente(self):
+        """Devuelve el elemento en el frente sin eliminarlo."""
+        if self.esta_vacia():
+            raise Exception("La cola está vacía")
+        return self.frente.dato
+
+    def obtener_tamano(self):
+        """Devuelve el número de elementos en la cola."""
+        return self.tamano
+
+    def imprimir_cola(self):
+        """Muestra los elementos de la cola en orden."""
+        actual = self.frente
+        elementos = []
+        while actual:
+            elementos.append(actual.dato)
+            actual = actual.siguiente
+        print("Cola actual: " + " -> ".join(map(str, elementos)))
+
+
+
+if __name__ == "__main__":
+    cola = ColaDinamica()
+    print("Estado inicial de la cola:")
+    cola.imprimir_cola()
+    
+    cola.encolar(1)
+    cola.encolar(2)
+    cola.encolar(3)
+    cola.imprimir_cola()  # Muestra la cola actual
+    
+    print("Elemento en el frente:", cola.ver_frente())
+    
+    cola.desencolar()
+    cola.imprimir_cola()  # Muestra la cola tras desencolar
+    
+    print("Tamaño actual de la cola:", cola.obtener_tamano())
+
