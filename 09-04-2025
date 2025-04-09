@@ -1,0 +1,191 @@
+// ejemplostruct.cpp : Este archivo contiene la función "main". La ejecución del programa comienza y termina ahí.
+//
+
+#include <iostream>
+#include <string>
+#define MAX 100
+using namespace std;
+
+struct t_empleados
+{
+	int id;
+	string nombre, fechanac;
+	float sb, sn;
+};
+
+t_empleados empleados; //Variable global
+
+//Prototipos
+void cargarvector(t_empleados v[], int n);
+void clasificarburbuja(t_empleados v[], int n);
+bool busquedacodigo(t_empleados v[], int n, int clave, int &z);
+void listarplanilla(t_empleados v[], int n);
+float salarioneto(float sb);
+float promedio(t_empleados v[], int n);
+
+// El cuerpo principal
+void main()
+{
+	// declaraciones de todas las variables que se usan
+	t_empleados empleados[MAX];
+
+
+
+
+	// Menú
+	int opcion, N, codigo, pos=0;
+	bool bandera;
+	do {
+
+		// Se muestran las opciones del menú
+		cout << "----Menu---"<<endl;
+		cout << "1. Cargar vector" << endl;
+		cout << "2. Clasificar burbuja" << endl;
+		cout << "3. Busqueda de codigo" << endl;
+		cout << "4. Listar plantilla" << endl;
+		cout << "5. Salario neto" << endl;
+		cout << "6. Promedio" << endl;
+		cout << "0. Salir" << endl;
+
+		cout << "Seleccione una opcion:" << endl;
+		cin >> opcion;
+		// determina de acuerdo a la opcion que debe ejecutarse
+		switch (opcion)
+		{
+		case 1:
+			do {
+				cout << "Introducir el numero de empleados: " << endl;
+				cin >> N;
+			} while (N > MAX || N <= 0);
+			cargarvector(empleados, N);
+			break;
+		case 2:
+			clasificarburbuja(empleados, N);
+			break;
+		case 3:
+			cout << "Ingreso el codigo a buscar";
+			cin >> codigo;
+			bandera = busquedacodigo(empleados, N, codigo, pos);
+			if (bandera) {
+				cout << "Codigo: " << empleados[pos].id;
+				cout << "Nombre: " << empleados[pos].nombre;
+				cout << "Fecha Nacimiento: " << empleados[pos].fechanac;
+				cout << "SalarioBruto: " << empleados[pos].sb;
+			}
+			else
+				cout << " No existe el codigo del empleado" << endl;
+			break;
+		case 4:
+			// Listar planilla
+			cout << "\t Planilla de Sueldos\n";
+			cout << "======================\n\n";
+			cout << "Cod  Nombre" << endl;
+			cout << "===========" << endl;
+			listarplanilla(empleados, N);
+
+			cout << "Promedio: " << promedio(empleados, N);
+			break;
+		case 5:
+			cout << "Introducir el codigo del empleado:" << endl;
+			cin >> codigo;
+			bandera = busquedacodigo(empleados, N, codigo, pos);
+			if (bandera)
+				salarioneto(empleados[pos].sb);
+			else
+				cout << "no existe el empleado" << endl;
+			break;
+		case 6:
+			cout << "El promedio total de la planilla es:" << endl;
+			cout << promedio(empleados, N);
+			break;
+		case 0:
+			cout << "salir" << endl;
+			break;
+		default:
+			cout << "Error" << endl;
+		}
+	} while (opcion!=0);
+}
+
+void cargarvector(t_empleados v[], int n) {
+	for (int i = 0; i < n; i++) {
+		cout << "\nEmpleado " << i + 1 << endl;
+		cout << "ID: ";
+		cin >> v[i].id;
+		cin.ignore(); // Limpiar el buffer para getline
+
+		cout << "Nombre: ";
+		getline(cin, v[i].nombre);
+
+		cout << "Fecha de nacimiento (dd/mm/aaaa): ";
+		getline(cin, v[i].fechanac);
+
+		cout << "Sueldo bruto: ";
+		cin >> v[i].sb;
+
+		// Aquí podés calcular el sueldo neto si querés aplicar alguna lógica
+		v[i].sn = v[i].sb * 0.85; // Ejemplo: 15% de descuentos
+
+		cin.ignore(); // Limpiar buffer para el próximo getline
+	}
+}
+float promedio(t_empleados v[], int n)
+{
+	float suma = 0;
+	for (int i = 0; i < n; i++)
+	{
+		suma += v[i].sb; //salario neto
+	}
+	if (n == 0)
+	{
+		cout << "No hay empleados en la lista" << endl;
+		return 0;
+	}
+	return suma / n;
+}
+void listarplanilla(t_empleados v[], int n) {
+	float total = 0;
+	cout << "PLANILLA DE SUELDOS" << endl;
+	for (int i = 0; i < n; i++) {
+		v[i].sn = salarioneto(v[i].sb);
+		total += v[i].sn;
+		cout << v[i].sn << "\t";
+		cout << v[i].nombre << "\t";
+		cout << v[i].id << "\t";
+		cout << v[i].sb << "\t";
+		cout << v[i].sn << endl;
+
+	}
+	float prom = total / n;
+	cout << "Promedio de salario neto: " << prom << endl;
+}
+
+void clasificarburbuja(t_empleados v[], int n) {
+	string orden;
+	for (int i = 0; i < n - 1; i++) {
+		for (int j = i + 1; j < n; j++) {
+			if (v[i].nombre > v[j].nombre) {
+				orden = v[i].nombre;
+				v[i].nombre = v[j].nombre;
+				v[j].nombre = orden;
+			}
+		}
+	}
+}
+bool busquedacodigo(t_empleados v[], int n, int clave, int& z)
+{
+	for (int i = 0; i < n; i++)
+	{
+		if (v[i].id == clave)
+		{
+			z = i;
+			return true;
+		}
+	}
+	return false;
+}
+float salarioneto(float sb) {
+	float descuento = sb * 0.13; // 13% de descuento
+	float sn = sb - descuento;
+	return sn;
+}
